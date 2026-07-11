@@ -42,6 +42,38 @@ pytest tests/test_demo.py -v --tb=short
 
 ## 验证记录
 
+### 2026-07-11 — Python 3.12.10 完整 pytest 验证
+
+**环境：** Python 3.12.10, Windows 10, pytest 9.1.1
+
+| 验证项 | 结果 | 备注 |
+|--------|------|------|
+| 语法检查 | ✅ 30/30 | 全部 Python 文件语法正确 |
+| 单元测试 | ✅ **90/90 passed** | 耗时 32.71s |
+| 机制演示 | ✅ 3/3 passed | 护栏拦截、反馈闭环、HITL 超时 |
+| Docker 构建 | ⬜ 待执行 | |
+| WebUI 启动 | ⬜ 待执行 | |
+
+**测试明细：**
+
+| 测试模块 | 测试数 | 结果 |
+|---------|--------|------|
+| test_config | 5 | ✅ |
+| test_context | 5 | ✅ |
+| test_credential | 6 | ✅ |
+| test_demo | 3 | ✅ |
+| test_feedback | 7 | ✅ |
+| test_guardrail | 17 | ✅ |
+| test_hitl | 4 | ✅ |
+| test_llm | 4 | ✅ |
+| test_loop | 4 | ✅ |
+| test_memory | 5 | ✅ |
+| test_models | 12 | ✅ |
+| test_parser | 5 | ✅ |
+| test_tools | 5 | ✅ |
+| test_webui | 3 | ✅ |
+| **总计** | **90** | **✅ 全部通过** |
+
 ### 2026-07-11 — 语法检查（当前环境 Python 3.7.7）
 
 | 文件 | 结果 |
