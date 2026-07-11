@@ -7,6 +7,7 @@ import os
 from typing import Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -82,7 +83,7 @@ def create_app(config: Optional[ConfigLoader] = None) -> FastAPI:
     @app.post("/api/approve")
     async def approve(request: ApproveRequest):
         if not state.hitl:
-            return {"error": "No HITL engine"}, 404
+            return JSONResponse(status_code=404, content={"error": "No HITL engine"})
         if request.decision == "approve":
             state.hitl.approve(request.approval_id)
         elif request.decision == "reject":
