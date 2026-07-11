@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyHarness - Coding Agent</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div class="panel-header">文件树</div>
+    <div id="file-tree">加载中...</div>
+  </div>
+  <div id="main">
+    <div id="terminal">
+      <div id="terminal-output"></div>
+      <div id="approval-box" class="hidden">
+        <div class="approval-header">需要审批</div>
+        <div id="approval-content"></div>
+        <div class="approval-actions">
+          <button onclick="handleApproval('approve')" class="btn-approve">通过</button>
+          <button onclick="handleApproval('reject')" class="btn-reject">拒绝</button>
+        </div>
+      </div>
+      <div id="input-line">
+        <span class="prompt">$</span>
+        <input type="text" id="user-input" placeholder="输入任务..." autofocus>
+        <button onclick="sendTask()" class="btn-send">发送</button>
+      </div>
+    </div>
+  </div>
+  <div id="status-panel">
+    <div class="panel-header">状态</div>
+    <div class="status-item"><span class="label">状态:</span> <span id="agent-status">空闲</span></div>
+    <div class="status-item"><span class="label">轮次:</span> <span id="agent-round">0/0</span></div>
+    <div class="status-item"><span class="label">护栏拦截:</span> <span id="guard-blocks">0</span></div>
+    <div class="status-item"><span class="label">API Key:</span> <span id="key-status">检查中...</span></div>
+  </div>
+</div>
+<div id="bottom-bar">
+  <button onclick="showConfig()">配置</button>
+  <button onclick="showGuardLog()">护栏日志</button>
+  <button onclick="stopAgent()">停止</button>
+</div>
+<div id="setup-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>配置 API Key</h3>
+    <p>请输入你的 Anthropic API Key（不会存储到日志或Git）：</p>
+    <input type="password" id="api-key-input" placeholder="sk-ant-...">
+    <div class="modal-actions">
+      <button onclick="saveApiKey()">保存</button>
+      <button onclick="closeSetup()">跳过</button>
+    </div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
