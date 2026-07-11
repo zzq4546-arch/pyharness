@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.harness/key.enc
+*.key
+*.pem
+.git/
+.gitignore
+tests/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
