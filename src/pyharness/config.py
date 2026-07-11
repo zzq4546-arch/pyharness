@@ -64,7 +64,7 @@ DEFAULT_CONFIG = {
 class ConfigLoader:
     def __init__(self, config_path: str = ".harness/config.yaml"):
         self.config_path = config_path
-        self._config = {}
+        self._config = DEFAULT_CONFIG.copy()
 
     def load(self) -> dict:
         if os.path.exists(self.config_path):
