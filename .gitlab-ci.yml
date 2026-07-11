@@ -1,0 +1,27 @@
+stages:
+  - test
+  - build
+
+unit-test:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - pip install -e ".[dev]"
+    - pip install cryptography
+  script:
+    - pytest tests/ -v --tb=short
+  artifacts:
+    when: always
+    paths:
+      - .pytest_cache/
+    expire_in: 7 days
+
+docker-build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t pyharness:latest .
+  only:
+    - main
