@@ -65,10 +65,10 @@ def test_loop_manual_stop():
     with tempfile.TemporaryDirectory() as tmpdir:
         config = ConfigLoader()
         config.load()
-        config._config["max_rounds"] = 10
+        config._config["max_rounds"] = 100000
         llm = MockProvider(responses=[
             '{"type": "response", "thought": "thinking..."}',
-        ] * 10)
+        ] * 100000)
         parser = ActionParser()
         guardrail = GuardrailChain([])
         tools = ToolExecutor(config, workspace=tmpdir)
@@ -83,7 +83,7 @@ def test_loop_manual_stop():
         import threading
         def stop_after_delay():
             import time
-            time.sleep(0.05)
+            time.sleep(0.01)
             loop.stop()
 
         threading.Thread(target=stop_after_delay).start()

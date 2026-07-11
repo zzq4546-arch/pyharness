@@ -74,10 +74,14 @@ class CredentialManager:
             with open(enc_path, "w") as fp:
                 json.dump({"encrypted": encrypted}, fp)
         except Exception:
-            pass
+            raise
 
-    def _derive_key(self) -> bytes:
-        machine_id = hashlib.sha256(
-            os.environ.get("COMPUTERNAME", "pyharness").encode()
-        ).digest()
-        return base64.urlsafe_b64encode(machine_id)
+    def _derive_key(self, password: str = None, salt: bytes = None) -> bytes:
+        if password is None:
+            password = os.environ.get("COMPUTERNAME", "pyharness")
+        if salt is None:
+            salt = hashlib.sha256(password.encode()).digest()[:16]
+        from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+        from cryptography.hazmat.primitives import hashes
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000)
+        return base64.urlsafe_b64encode(kdf.derive(password.encode()))

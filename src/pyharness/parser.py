@@ -31,23 +31,20 @@ class ActionParser:
         match = re.search(r"```json\s*(.*?)\s*```", text, re.DOTALL)
         if match:
             return match.group(1).strip()
-        match = re.search(r'\{[^{}]*"type"\s*:\s*"[^"]+"', text, re.DOTALL)
-        if match:
-            start = match.start()
-            depth = 0
-            end = start
-            for i, ch in enumerate(text[start:], start):
-                if ch == '{':
-                    depth += 1
-                elif ch == '}':
-                    depth -= 1
-                    if depth == 0:
-                        end = i + 1
-                        break
-            candidate = text[start:end]
-            try:
-                json.loads(candidate)
-                return candidate
-            except json.JSONDecodeError:
-                pass
+        start = text.find("{")
+        if start == -1:
+            return None
+        depth = 0
+        for i in range(start, len(text)):
+            if text[i] == "{":
+                depth += 1
+            elif text[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    candidate = text[start:i+1]
+                    try:
+                        json.loads(candidate)
+                        return candidate
+                    except json.JSONDecodeError:
+                        return None
         return None

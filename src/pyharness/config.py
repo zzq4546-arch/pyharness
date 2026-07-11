@@ -80,10 +80,13 @@ class ConfigLoader:
         value = self._config
         for k in keys:
             if isinstance(value, dict):
-                value = value.get(k)
+                if k in value:
+                    value = value[k]
+                else:
+                    return default
             else:
                 return default
-        return value if value is not None else default
+        return value
 
     def _deep_merge(self, base: dict, override: dict) -> dict:
         for key, value in override.items():

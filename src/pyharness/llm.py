@@ -28,11 +28,10 @@ class AnthropicProvider(LLMProvider):
     def __init__(self, api_key: str, model: str = "claude-sonnet-4-20250514"):
         self._api_key = api_key
         self._model = model
+        import anthropic
+        self._client = anthropic.Anthropic(api_key=self._api_key)
 
     def chat(self, messages: list[Message]) -> str:
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=self._api_key)
         system_msg = ""
         user_msgs = []
         for m in messages:
@@ -40,7 +39,7 @@ class AnthropicProvider(LLMProvider):
                 system_msg = m.content
             else:
                 user_msgs.append({"role": m.role, "content": m.content})
-        response = client.messages.create(
+        response = self._client.messages.create(
             model=self._model,
             max_tokens=4096,
             system=system_msg if system_msg else None,

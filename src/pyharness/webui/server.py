@@ -172,9 +172,13 @@ def _run_agent(task: str):
     def on_event(event):
         if state.websocket:
             try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                return
+            try:
                 asyncio.run_coroutine_threadsafe(
                     state.websocket.send_text(json.dumps(event, default=str)),
-                    asyncio.get_event_loop() if asyncio.get_event_loop().is_running() else None
+                    loop
                 )
             except Exception:
                 pass

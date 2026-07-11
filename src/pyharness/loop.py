@@ -1,5 +1,4 @@
 import threading
-import time
 from pyharness.models import Message, Action, AgentState
 from pyharness.config import ConfigLoader
 from pyharness.llm import LLMProvider
@@ -70,7 +69,6 @@ class AgentLoop:
                         "reason": action.stop_reason}
 
             if action.type == "response":
-                time.sleep(0.01)
                 continue
 
             if action.type == "tool_call":
@@ -88,7 +86,6 @@ class AgentLoop:
                         role="tool",
                         content=f"Action blocked: {guard_result.reason}",
                     ))
-                    time.sleep(0.01)
                     continue
 
                 if guard_result.needs_approval:
@@ -108,14 +105,12 @@ class AgentLoop:
                             role="tool",
                             content=f"Action rejected by user: {action.tool_name}",
                         ))
-                        time.sleep(0.01)
                         continue
                     if decision == "timeout":
                         self._history.append(Message(
                             role="tool",
                             content=f"Action approval timed out: {action.tool_name}",
                         ))
-                        time.sleep(0.01)
                         continue
 
                 self._state.status = "EXECUTING"
@@ -136,8 +131,6 @@ class AgentLoop:
                 if self._feedback.is_stuck(self._feedbacks):
                     on_event({"type": "status", "status": "stuck", "round": round_num})
                     return {"status": "stuck", "rounds": round_num}
-
-            time.sleep(0.01)
 
         on_event({"type": "status", "status": "max_rounds", "round": max_rounds})
         return {"status": "max_rounds", "rounds": max_rounds}

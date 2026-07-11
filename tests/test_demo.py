@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import threading
@@ -62,10 +63,10 @@ def test_demo_2_feedback_loop_changes_behavior():
             f.write("def test_add():\n    assert 1 + 1 == 3\n")
 
         loop, hitl = build_harness(tmpdir, llm_responses=[
-            '{"type": "tool_call", "tool_name": "run_tests", "tool_args": {"command": "pytest test_calc.py"}, "thought": "running tests"}',
-            '{"type": "tool_call", "tool_name": "write_file", "tool_args": {"path": "' + test_file.replace('\\', '\\\\') + '", "content": "def test_add():\\n    assert 1 + 1 == 2\\n"}, "thought": "fixing the test based on feedback"}',
-            '{"type": "tool_call", "tool_name": "run_tests", "tool_args": {"command": "pytest test_calc.py"}, "thought": "re-running tests after fix"}',
-            '{"type": "stop", "stop_reason": "task_complete", "thought": "tests pass now"}',
+            json.dumps({"type": "tool_call", "tool_name": "run_tests", "tool_args": {"command": "pytest test_calc.py"}, "thought": "running tests"}),
+            json.dumps({"type": "tool_call", "tool_name": "write_file", "tool_args": {"path": test_file, "content": "def test_add():\n    assert 1 + 1 == 2\n"}, "thought": "fixing the test based on feedback"}),
+            json.dumps({"type": "tool_call", "tool_name": "run_tests", "tool_args": {"command": "pytest test_calc.py"}, "thought": "re-running tests after fix"}),
+            json.dumps({"type": "stop", "stop_reason": "task_complete", "thought": "tests pass now"}),
         ])
         events = []
         result = loop.run("fix the failing test", on_event=events.append)

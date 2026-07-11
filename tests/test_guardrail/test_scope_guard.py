@@ -48,17 +48,20 @@ def test_scope_guard_blocks_env_file():
 
 
 def test_scope_guard_blocks_key_file():
-    guard = ScopeGuard(ConfigLoader(), workspace="/tmp")
-    guard._config.load()
-    action = Action(type="tool_call", tool_name="write_file",
-                    tool_args={"path": "/tmp/secret.key", "content": "key"}, thought="")
-    result = guard.check(action)
-    assert result.blocked is True
+    with tempfile.TemporaryDirectory() as tmpdir:
+        guard = ScopeGuard(ConfigLoader(), workspace=tmpdir)
+        guard._config.load()
+        key_path = os.path.join(tmpdir, "secret.key")
+        action = Action(type="tool_call", tool_name="write_file",
+                        tool_args={"path": key_path, "content": "key"}, thought="")
+        result = guard.check(action)
+        assert result.blocked is True
 
 
 def test_scope_guard_skips_non_file_actions():
-    guard = ScopeGuard(ConfigLoader(), workspace="/tmp")
-    action = Action(type="tool_call", tool_name="execute_shell",
-                    tool_args={"command": "ls"}, thought="")
-    result = guard.check(action)
-    assert result.blocked is False
+    with tempfile.TemporaryDirectory() as tmpdir:
+        guard = ScopeGuard(ConfigLoader(), workspace=tmpdir)
+        action = Action(type="tool_call", tool_name="execute_shell",
+                        tool_args={"command": "ls"}, thought="")
+        result = guard.check(action)
+        assert result.blocked is False

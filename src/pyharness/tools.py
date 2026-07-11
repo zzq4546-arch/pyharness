@@ -79,7 +79,7 @@ class ToolExecutor:
 
     def _handle_run_lint(self, args: dict) -> ToolResult:
         target = args.get("path", ".")
-        command = f"ruff check {target}" if args.get("path") else "ruff check ."
+        command = f"ruff check {target}"
         return self._handle_execute_shell({"command": command})
 
     def _handle_list_files(self, args: dict) -> ToolResult:
