@@ -77,7 +77,8 @@ def create_app(config: Optional[ConfigLoader] = None) -> FastAPI:
     async def chat(request: ChatRequest):
         if state.running:
             return {"error": "Agent is already running"}, 409
-        threading.Thread(target=_run_agent, args=(request.task,), daemon=True).start()
+        loop = asyncio.get_running_loop()
+        threading.Thread(target=_run_agent, args=(request.task, loop), daemon=True).start()
         return {"status": "started", "task": request.task}
 
     @app.post("/api/approve")
@@ -134,7 +135,7 @@ def create_app(config: Optional[ConfigLoader] = None) -> FastAPI:
     return app
 
 
-def _run_agent(task: str):
+def _run_agent(task: str, event_loop):
     config = state.config
     workspace = os.getcwd()
 
@@ -173,13 +174,9 @@ def _run_agent(task: str):
     def on_event(event):
         if state.websocket:
             try:
-                loop = asyncio.get_running_loop()
-            except RuntimeError:
-                return
-            try:
                 asyncio.run_coroutine_threadsafe(
                     state.websocket.send_text(json.dumps(event, default=str)),
-                    loop
+                    event_loop
                 )
             except Exception:
                 pass
