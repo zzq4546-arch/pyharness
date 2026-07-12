@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: pyharness
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
